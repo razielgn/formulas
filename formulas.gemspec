@@ -14,4 +14,6 @@ Gem::Specification.new do |gem|
 
   gem.files         = Dir.glob('lib/**/*')
   gem.require_paths = ["lib"]
+
+  gem.add_dependency 'shikashi', '~> 0.5.0'
 end

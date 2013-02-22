@@ -1,5 +1,41 @@
-require "formulas/version"
+require 'formulas/version'
+require 'shikashi'
 
 module Formulas
-  # Your code goes here...
+  include Shikashi
+
+  def self.included(base)
+    base.extend ClassMethods
+  end
+
+  module ClassMethods
+    def calculated_field(field)
+      define_method("#{field}_calc") do
+        code = send(field)
+        sandbox_run(code)
+      end
+    end
+
+    def calculated_fields(*fields)
+      fields.each{ |f| calculated_field(f) }
+    end
+  end
+
+  private
+
+  def sandbox_run(code)
+    begin
+      Sandbox.new.run(privileges, code)
+    rescue SecurityError
+      nil
+    end
+  end
+
+  def privileges
+    @privileges ||= Privileges.new.tap do |p|
+      p.instances_of(Fixnum).allow :+, :-, :*, :/, :**
+      p.instances_of(Float).allow  :+, :-, :*, :/, :**
+      p.instances_of(Bignum).allow :+, :-, :*, :/, :**
+    end
+  end
 end
