@@ -46,7 +46,7 @@ module Formulas
       EvalSandbox.new(data_source: source,
                       object_instance: self,
                       code: code).eval!
-    rescue SyntaxError, SecurityError => ex
+    rescue Exception => ex
       calculated_fields_errors[field] = ex.message
       nil
     end
