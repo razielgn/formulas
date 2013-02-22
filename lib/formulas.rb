@@ -12,7 +12,11 @@ module Formulas
     def calculated_field(field)
       define_method("#{field}_calc") do
         code = send(field)
-        sandbox_run(code)
+        sandbox_run(field, code)
+      end
+
+      define_method("#{field}_error") do
+        calculated_fields_errors[field]
       end
     end
 
@@ -21,12 +25,18 @@ module Formulas
     end
   end
 
+  def calculated_fields_errors
+    @_calculated_fields_errors ||= {}
+    @_calculated_fields_errors
+  end
+
   private
 
-  def sandbox_run(code)
+  def sandbox_run(field, code)
     begin
       Sandbox.new.run(privileges, code)
-    rescue SecurityError
+    rescue Exception => ex
+      calculated_fields_errors[field] = ex.message
       nil
     end
   end

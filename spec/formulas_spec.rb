@@ -71,7 +71,20 @@ describe 'Formulas' do
 
     context 'unallowed stuff' do
       subject{ SimpleAttributes.new(attr1: '2.times{ puts "asd" }') }
-      its(:attr1_calc){ should be_nil }
+
+      it 'should store the error' do
+        subject.attr1_calc.should be_nil
+        subject.attr1_error.should == 'Cannot invoke method times on object of class Integer'
+      end
+    end
+
+    context 'syntax error' do
+      subject{ SimpleAttributes.new(attr1: '(2 + 3') }
+
+      it 'should store the error' do
+        subject.attr1_calc.should be_nil
+        subject.attr1_error.should == 'SyntaxError'
+      end
     end
   end
 end
