@@ -86,5 +86,14 @@ describe 'Formulas' do
         subject.attr1_error.should == 'SyntaxError'
       end
     end
+
+    context 'nil parameter' do
+      subject{ SimpleAttributes.new(attr1: nil) }
+
+      it 'should not store any errors' do
+        subject.attr1_calc.should be_nil
+        subject.attr1_error.should be_nil
+      end
+    end
   end
 end

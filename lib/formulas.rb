@@ -11,7 +11,7 @@ module Formulas
   module ClassMethods
     def calculated_field(field)
       define_method("#{field}_calc") do
-        code = send(field)
+        code = send(field).to_s
         sandbox_run(field, code)
       end
 
